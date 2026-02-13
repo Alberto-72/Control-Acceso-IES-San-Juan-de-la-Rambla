@@ -29,33 +29,31 @@ app.post('/api/verificar-tarjeta', (req, res) => {
             console.error('Error de conexión con Odoo:', err);
             return res.status(500).json({ success: false, error: 'Fallo conexión Odoo' });
         }
-
-        odoo.execute_kw('gestion_entrada.alumno', 'search_read', [
-            [[['uid', '=', tarjetaId]]]
-        ], 
-        {
-            fields: ['name', 'surname', 'email'],
-            limit: 1
-        }, 
-        (err, result) => {
+        odoo.execute_kw(
+            'gestion_entrada.alumno', 
+            'search_read', 
+            [
+                [[['uid', '=', tarjetaId]]], 
+                {
+                    fields: ['name', 'surname'],
+                    limit: 1
+                }
+            ],(err, result) => {
             if (err) {
                 console.error('Error en búsqueda Odoo:', err);
                 return res.status(500).json({ success: false, error: err });
             }
 
-            console.log("Respuesta cruda de Odoo:", JSON.stringify(result));
-
             if (result && result.length > 0) {
+
                 const alumno = result[0];
                 const nombreCompleto = `${alumno.name} ${alumno.surname}`;
-                const datosExtra = alumno.email || 'Sin email registrado';
 
                 console.log(`ALUMNO ENCONTRADO: ${nombreCompleto}`);
 
                 return res.json({
                     success: true,
                     nombre: nombreCompleto,
-                    curso: datosExtra,
                     autorizado: true
                 });
             } else {
