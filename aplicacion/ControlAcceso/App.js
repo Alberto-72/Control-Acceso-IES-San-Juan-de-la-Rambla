@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar as RNStatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar as RNStatusBar, Alert, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import NfcManager, { NfcTech } from 'react-native-nfc-manager';
@@ -65,6 +65,7 @@ function MainScreen() {
           setAlumno({
             nombre: data.nombre,
             curso: data.curso,
+            foto: data.foto || null,
             autorizado: true
           });
         } else {
@@ -136,7 +137,14 @@ function MainScreen() {
           <>
             <View style={styles.tarjeta}>
               <View style={[styles.avatar, !alumno.autorizado && {borderColor: '#DC2626', borderWidth: 2}]}>
-                <Ionicons name="person" size={60} color={!alumno.autorizado ? "#DC2626" : "#9CA3AF"} />
+                {alumno.foto ? (
+                  <Image 
+                    source={{ uri: `data:image/png;base64,${alumno.foto}` }} 
+                    style={styles.avatarImage} 
+                  />
+                ) : (
+                  <Ionicons name="person" size={60} color={!alumno.autorizado ? "#DC2626" : "#9CA3AF"} />
+                )}
               </View>
               
               <Text style={styles.nombreAlumno}>{alumno.nombre}</Text>
@@ -189,11 +197,14 @@ function MainScreen() {
 }
 
 const styles = StyleSheet.create({
+  //contenedor principal
   container: { 
     flex: 1, 
     backgroundColor: '#F3F4F6', 
     paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0 
   },
+
+  //header
   header: { 
     backgroundColor: '#2563EB', 
     padding: 20, 
@@ -205,28 +216,43 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 22, fontWeight: 'bold', color: 'white' },
   headerSubtitle: { fontSize: 14, color: '#E0E7FF', marginTop: 4 },
+
+  //content area
   content: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20, marginTop: -30 },
   cajaBlanca: { 
     backgroundColor: 'white', width: '100%', padding: 30, borderRadius: 20, alignItems: 'center', elevation: 5,
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4,
   },
+  cajaVacia: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+
+  //circular icon
   circuloIcono: { width: 100, height: 100, borderRadius: 50, backgroundColor: '#EFF6FF', justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
   circuloIconoActivo: { backgroundColor: '#DCFCE7' },
+
+  //texts
   tituloVacio: { fontSize: 20, fontWeight: 'bold', color: '#1F2937', marginBottom: 10 },
   subtituloVacio: { fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 30 },
+
+  //buttons
   botonGrande: { backgroundColor: '#2563EB', flexDirection: 'row', width: '100%', padding: 16, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   textoBotonGrande: { color: 'white', fontSize: 18, fontWeight: 'bold' },
+  botonSiguiente: { backgroundColor: '#2563EB', flexDirection: 'row', width: '100%', padding: 16, borderRadius: 12, justifyContent: 'center', alignItems: 'center', elevation: 3 },
+  textoBotonSiguiente: { color: 'white', fontSize: 18, fontWeight: 'bold' },
+
+  //student card
   tarjeta: { backgroundColor: 'white', width: '100%', padding: 30, borderRadius: 20, alignItems: 'center', elevation: 5, marginBottom: 20 },
-  avatar: { width: 100, height: 100, borderRadius: 50, borderWidth: 4, borderColor: '#4ADE80', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F9FAFB', marginBottom: 16 },
+  avatar: { width: 100, height: 100, borderRadius: 50, borderWidth: 4, borderColor: '#4ADE80', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F9FAFB', marginBottom: 16, overflow: 'hidden' },
+  avatarImage: { width: '100%', height: '100%', borderRadius: 50 },
   nombreAlumno: { fontSize: 24, fontWeight: 'bold', color: '#111827', textAlign: 'center' },
   cursoAlumno: { fontSize: 16, color: '#6B7280', marginBottom: 20 },
+
+  //badges
   badgeExito: { flexDirection: 'row', backgroundColor: '#DCFCE7', padding: 10, borderRadius: 20, alignItems: 'center', marginBottom: 10 },
   textoExito: { color: '#15803D', fontWeight: 'bold', fontSize: 16 },
   badgeError: { flexDirection: 'row', backgroundColor: '#FEF2F2', padding: 10, borderRadius: 20, alignItems: 'center', marginBottom: 10 },
   textoError: { color: '#DC2626', fontWeight: 'bold', fontSize: 16 },
-  botonSiguiente: { backgroundColor: '#2563EB', flexDirection: 'row', width: '100%', padding: 16, borderRadius: 12, justifyContent: 'center', alignItems: 'center', elevation: 3 },
-  textoBotonSiguiente: { color: 'white', fontSize: 18, fontWeight: 'bold' },
+
+  //navigation footer
   footer: { flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 15, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#E5E7EB' },
   tabItem: { alignItems: 'center', justifyContent: 'center', width: 60 },
-  cajaVacia: { flex: 1, justifyContent: 'center', alignItems: 'center' }
 });

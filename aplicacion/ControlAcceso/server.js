@@ -15,12 +15,12 @@ const odooConfig = {
 };
 
 app.get('/', (req, res) => {
-    res.send('🚀 Servidor Odoo funcionando correctamente.');
+    res.send('Servidor Odoo funcionando correctamente.');
 });
 
 app.post('/api/verificar-tarjeta', (req, res) => {
     const { tarjetaId } = req.body;
-    console.log(`\n🔍 UID Recibido: ${tarjetaId} -> Consultando Odoo...`);
+    console.log(`\nUID Recibido: ${tarjetaId} -> Consultando Odoo...`);
 
     const odoo = new Odoo(odooConfig);
 
@@ -35,7 +35,7 @@ app.post('/api/verificar-tarjeta', (req, res) => {
             [
                 [[['uid', '=', tarjetaId]]], 
                 {
-                    fields: ['name', 'surname'],
+                    fields: ['name', 'surname', 'photo'],
                     limit: 1
                 }
             ],(err, result) => {
@@ -54,6 +54,7 @@ app.post('/api/verificar-tarjeta', (req, res) => {
                 return res.json({
                     success: true,
                     nombre: nombreCompleto,
+                    foto: alumno.photo || null,
                     autorizado: true
                 });
             } else {
